@@ -3,8 +3,24 @@ from pyglet.gl import *
 from math import pi, sin, cos
 
 class Mass:
+    def __init__(self,weight,x,y):
+        self.weight = int(min(50,max(0,weight)))
+        self.x,self.y = int(x),int(y)
 
+    def __draw__(mass: Mass):
+        iterations = int(2*weight*pi)
+        s = sin(2*pi / iterations)
+        c = cos(2*pi / iterations)
 
+        dx, dy = 1, 0
+
+        glBegin(GL_TRIANGLE_FAN)
+        glVertex2f(x, y)
+        for i in range(iterations+1):
+            glVertex2f(x+dx, y+dy)
+            dx, dy = (dx*c - dy*s), (dy*c + dx*s)
+        glEnd()
+    
 window = pt.window.Window()
 label = pt.text.Label('Hello World',x=10,y=10)
 
@@ -14,19 +30,7 @@ def on_draw():
     label.draw()
     draw_circle()
 
-def draw_circle(mass: Mass):
-    iterations = int(2*1*pi)
-    s = sin(2*pi / iterations)
-    c = cos(2*pi / iterations)
 
-    dx, dy = 1, 0
-
-    glBegin(GL_TRIANGLE_FAN)
-    glVertex2f(100, 100)
-    for i in range(iterations+1):
-        glVertex2f(100+dx, 100+dy)
-        dx, dy = (dx*c - dy*s), (dy*c + dx*s)
-    glEnd()
 
 if __name__ == '__main__':
     pt.app.run()
