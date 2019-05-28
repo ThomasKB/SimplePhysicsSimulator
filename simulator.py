@@ -2,7 +2,7 @@ import pyglet as pt
 from pyglet.gl import *
 from math import pi, sin, cos
 
-#Mass
+#Mass2
 class Mass:
     def __init__(self,weight,x,y):
         self.weight = int(min(50,max(0,weight)))
