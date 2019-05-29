@@ -1,10 +1,12 @@
 import pyglet as pt
 from pyglet.gl import *
-from math import pi, sin, cos, ceil
+from math import pi, sin, cos, ceil, sqrt, atan
 WEIGHT_MAX = 20
 WEIGHT_SCALAR = 1000
+GRAV_CONSTANT = 6.67408e-11
 window = pt.window.Window()
 
+dist = lambda m1, m2 : sqrt((m2.x-m1.x)**2+(m2.y-m1.y)**2)
 class Mass:
     def __init__(self,radius,x,y):
         self.vx = 0
@@ -38,18 +40,29 @@ class Mass:
         self.vy += self.ay
         self.y += self.vy
 
-mass = Mass(2, 10,400)
-mass2 = Mass(5, 10,250)
+mass = Mass(1, 100, 260)
+mass2 = Mass(10, 100, 250)
 
 @window.event
 def on_draw():
     window.clear()
-    mass.__update__(1,-9.82*mass.weight)
-    mass2.__update__(1,-9.82*mass2.weight)
+    attract_x,attract_y = calc_attraction(mass,mass2)
+    mass.__update__(attract_x,attract_y)
+    mass2.__update__(0,0)
+    print(attract_x,attract_y)
     mass.__draw__()
     mass2.__draw__()
 def call_on_draw(args): on_draw()
 
+def calc_attraction(mass,masses):
+    if masses.x == mass.x:
+        theta = 270
+    else:
+        theta = atan((masses.y-mass.y)/(masses.x-mass.x))
+    v = GRAV_CONSTANT*mass.weight*masses.weight/dist(mass,masses)**2
+    vx = v*cos(theta)
+    vy = v*sin(theta)
+    return vx,vy
 if __name__ == '__main__':
-    pyglet.clock.schedule_interval(call_on_draw, 1/10)
+    pyglet.clock.schedule_interval(call_on_draw, 1/40)
     pt.app.run()
